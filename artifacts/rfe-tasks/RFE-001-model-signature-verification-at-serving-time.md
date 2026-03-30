@@ -12,23 +12,24 @@ The ODH/RHOAI platform should allow users to enable signature verification polic
 
 ## Problem Statement
 
-Today, RHOAI supports signing AI models at storage time through integration of AI Hub/Model Registry Red Hat Trusted Artifact Signer via [RHAISTRAT-513](https://issues.redhat.com/browse/RHAISTRAT-513) (upstream: Sigstore Cosign and OpenSSF Model Signing).
+Today, RHOAI supports signing AI models at storage time through integration of AI Hub/Model Registry and Red Hat Trusted Artifact Signer via [RHAISTRAT-513](https://issues.redhat.com/browse/RHAISTRAT-513) (upstream: Sigstore Cosign and OpenSSF Model Signing).
 
 When storing models, users can produce:
 
 - A `model.sig` (OpenSSF Model Signature) alongside models in S3, or in HuggingFace, etc.
-- A Cosign-signed container image with embedded `model.sig` for ModelCar (OCI) format
+- A Cosign-signed container image, with also embedded `model.sig` for ModelCar (OCI) format
 
 However, when these signed models are served via KServe or llm-d, the signatures are completely ignored unless some platform controller is wired in.
 
-If there is no verification step, it implies the signing workflow is not leveraged for runtime integrity guarantee.
+If there is no verification step, it implies the existing signing workflow is not leveraged for runtime integrity guarantee.
 
 A user who carefully signs their model has no assurance that the model actually being served matches what they signed. An admin has no guidance on how to setup the Red Hat Trusted Artifact Signer with OpenShift AI so to ensure Model Signatures are verified for the deployed inference workload.
 
 ## Affected Customers
 
-<!-- Adam to fill-in segment/customer names -->
-- [Placeholder: specific customer accounts and segments to be confirmed]
+Customer segments:
+- FSI
+- Government
 
 ## Business Justification
 
@@ -42,9 +43,9 @@ A user who carefully signs their model has no assurance that the model actually 
 - [ ] Models sourced from S3, HuggingFace, etc with a `model.sig` are verified against the configured policy before serving
 - [ ] Models sourced as OCI ModelCar images are verified (container image signature and/or embedded OpenSSF Model Signature) against the configured policy before serving
 - [ ] Admin and Users receive clear feedback when a model fails signature verification
-- [ ] Models that fail signature verification are not served
+- [ ] Models that fail signature verification are not served dependent on admin policies (for example, some Admins may prefer get only a Warning instead, while others making it hard-stop not deployed)
 
 ## Success Criteria
 
-Admins and Users can opt in to signature verification policies and receive clear pass/fail feedback before models are served through KServe or llm-d.
+Admins and Users can opt-in to signature verification policies and receive clear pass/fail feedback before models are served through KServe or llm-d.
 The end-to-end story arc — sign on store, verify on serve — provides a complete trust chain for AI model provenance.
